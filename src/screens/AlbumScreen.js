@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import Sound from 'react-native-sound';
-import { getAlbumTracks } from '../APIRequests';
+import { getAlbumTracks, hasError } from '../APIRequests';
 import { Track } from '../components/Track';
 
 export class AlbumScreen extends React.Component {
@@ -43,15 +43,16 @@ export class AlbumScreen extends React.Component {
   getTracks = () => {
     const { route } = this.props;
     const { album } = route.params;
-    getAlbumTracks(album.id, this.page).then(response => {
-      if (!response) {
+    getAlbumTracks(album.id, this.page).then(result => {
+      if (hasError(result, this.getTracks)) {
         return;
       }
+
       this.setState({
         tracks:
           this.page === 0
-            ? response.items
-            : this.state.tracks.concat(response.items),
+            ? result.items
+            : this.state.tracks.concat(result.items),
       });
     });
   };

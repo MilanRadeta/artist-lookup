@@ -32,7 +32,7 @@ export const authenticate = () => {
   const body = transformJsonToFormEncoded({
     grant_type: 'client_credentials',
   });
-  processPromise(
+  return processPromise(
     fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -45,7 +45,22 @@ export const authenticate = () => {
     response.access_token
       ? AsyncStorage.setItem('access_token', response.access_token)
       : AsyncStorage.removeItem('access_token');
+    return response;
   });
+};
+
+export const hasError = (result, callback) => {
+  if (result.error) {
+    if (result.error.status === 401) {
+      authenticateAndRetry(callback);
+    }
+    return true;
+  }
+  return false;
+};
+
+export const authenticateAndRetry = callback => {
+  authenticate().then(response => response.access_token && callback());
 };
 
 export const searchArtists = async (value, page = 0, limit = 20) => {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { getAlbumsByArtistId } from '../APIRequests';
+import { getAlbumsByArtistId, hasError } from '../APIRequests';
 import { Album } from '../components/Album';
 import { Screens } from '../navigation/NavigationScreens';
 
@@ -27,15 +27,16 @@ export class ArtistScreen extends React.Component {
   getAlbums = () => {
     const { route } = this.props;
     const { artist } = route.params;
-    getAlbumsByArtistId(artist.id, this.page).then(response => {
-      if (!response) {
+    getAlbumsByArtistId(artist.id, this.page).then(result => {
+      if (hasError(result, this.getAlbums)) {
         return;
       }
+
       this.setState({
         albums:
           this.page === 0
-            ? response.items
-            : this.state.albums.concat(response.items),
+            ? result.items
+            : this.state.albums.concat(result.items),
       });
     });
   };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { searchArtists } from '../APIRequests';
+import { hasError, searchArtists } from '../APIRequests';
 import { Artist } from '../components/Artist';
 import COLORS from '../constants/Colors';
 import { Screens } from '../navigation/NavigationScreens';
@@ -42,9 +42,10 @@ export class HomeScreen extends React.Component {
       return;
     }
     searchArtists(this.value, this.page).then(result => {
-      if (!result) {
+      if (hasError(result, this.searchArtists)) {
         return;
       }
+
       this.flatList &&
         this.flatList.scrollToOffset({ animated: true, offset: 0 });
       this.setState({
