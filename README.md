@@ -34,6 +34,10 @@ Open Terminal at the location of the project and run "npm install" or "yarn inst
 
 If you're building for iOS, change directory to ios folder and run "pod install".
 
+# Use Spotify credentials
+
+Open src/credentials.json and use your Spotify API client credentials.
+
 # Run on Android
 
 Connect your device with development mode turned on or start an emulator from Android studio.
